@@ -84,3 +84,19 @@ The tables below describe the examples available in this repository.
 | OfflineProcessing        | Example showing how to ingest a file containing data from web requests and perform detection against the entries.                                                                                                              |
 | PerformanceBenchmark     | How to configure the various performance options and run some simple performance tests.                                                                                                                                        |
 | UpdateOnStartup          | How to configure the Pipeline to automatically update the device detection data file on startup. Also illustrates 'file watcher'. This will refresh the device detection engine if the specified data file is updated on disk. |
+
+## Running built examples from command line
+
+Running
+
+```bash
+mvn package
+```
+
+will produce "fat" JARs inside `target` subfolders.
+
+Use them with relevant example class entrypoints like:
+
+```bash
+java -cp .\console\target\device-detection-java-examples.console-4.4.20-jar-with-dependencies.jar fiftyone.devicedetection.examples.console.OfflineProcessing
+```

@@ -64,9 +64,12 @@ public class GettingStartedOnPrem {
     Note that the Lite data file is only used for illustration, and has limited accuracy and
     capabilities. Find out about the Enterprise data file here: https://51degrees.com/pricing */
     public static String LITE_V_4_1_HASH = "51Degrees-LiteV4.1.hash";
+    public static String ENTERPRISE_HASH = "TAC-HashV41.hash";
 
     public static void main(String[] args) throws Exception {
         configureLogback(getFilePath("logback.xml"));
+
+        //for best device detection results use the ENTERPRISE_HASH data file
         String dataFile = args.length > 0 ? args[0] : LITE_V_4_1_HASH;
         // prepare 'evidence' for use in pipeline (see below)
         List<Map<String, String>> evidence = EvidenceHelper.setUpEvidence();

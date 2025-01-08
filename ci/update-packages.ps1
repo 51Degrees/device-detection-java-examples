@@ -6,7 +6,7 @@ param(
     [string]$RepoName
 )
 
-./java/run-update-dependencies.ps1 -RepoName $RepoName -ProjectDir $ProjectDir -Name $Name
+./java/run-update-dependencies.ps1 -RepoName $RepoName -ProjectDir $ProjectDir -Name $Name -AllowSnapshots
 
 exit $LASTEXITCODE
 

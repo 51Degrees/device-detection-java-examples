@@ -50,7 +50,7 @@
         <junit.version>4.13.3-SNAPSHOT</junit.version>
         <maven.deploy.skip>true</maven.deploy.skip>
         <snakeyaml.version>1.30</snakeyaml.version>
-        <device-detection.version>4.5.0-alpha.355</device-detection.version>
+        <device-detection.version>4.5.0-alpha.358</device-detection.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
 
         <ossrh.baseurl>https://oss.sonatype.org</ossrh.baseurl>

@@ -1,10 +1,7 @@
-
 param(
-    [string]$ProjectDir = ".",
-    [string]$Name,    
-    [hashtable]$Keys,
-    [Parameter(Mandatory=$true)]
-    [string]$RepoName
+    [Parameter(Mandatory)][string]$RepoName,
+    [string]$Name,
+    [hashtable]$Keys
 )
 
 $RepoPath = [IO.Path]::Combine($pwd, $RepoName)

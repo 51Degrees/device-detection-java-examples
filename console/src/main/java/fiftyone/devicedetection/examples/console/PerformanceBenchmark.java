@@ -52,8 +52,8 @@ import static fiftyone.pipeline.engines.Constants.PerformanceProfiles.*;
  * The example illustrates the flexibility with which the 51Degrees pipeline can be configured
  * to achieve a range of outcomes relating to speed, accuracy, predictive power, memory usage.
  * <p>
- * Please see <a href="//51degrees.com/documentation/_device_detection__features__performance_options.html">performance options</a>)
- * and <a href="//51degrees.com/documentation/_device_detection__hash.html#DeviceDetection_Hash_DataSetProduction_Performance">hash dataset options</a>
+ * Please see <a href="/documentation/4.5/_device_detection__features__performance_options.html">performance options</a>)
+ * and <a href="/documentation/4.5/_device_detection__hash.html#DeviceDetection_Hash_DataSetProduction_Performance">hash dataset options</a>
  * for more information about adjusting performance.
  */
 public class PerformanceBenchmark {
@@ -202,8 +202,8 @@ public class PerformanceBenchmark {
      * Helper to set the critical performance settings of the pipeline, shared between memory and
      * disk data source pipeline creation, to ensure consistency.
      * <p>
-     * Please see <a href="//51degrees.com/documentation/_device_detection__features__performance_options.html">performance options</a>)
-     * and <a href="//51degrees.com/documentation/_device_detection__hash.html#DeviceDetection_Hash_DataSetProduction_Performance">hash dataset options</a>
+     * Please see <a href="/documentation/4.5/_device_detection__features__performance_options.html">performance options</a>)
+     * and <a href="/documentation/4.5/_device_detection__hash.html#DeviceDetection_Hash_DataSetProduction_Performance">hash dataset options</a>
      * for more information about adjusting performance.
      * @param builder          the builder to configure
      * @param config benchmark configuration
@@ -399,8 +399,8 @@ public class PerformanceBenchmark {
  * reduces detection time compared with requesting properties from multiple components. If you
  * don't specify any properties to detect, then all properties are detected.
  *
- * Please review [performance options](https://51degrees.com/documentation/_device_detection__features__performance_options.html]
- * and [hash dataset options](https://51degrees.com/documentation/_device_detection__hash.html#DeviceDetection_Hash_DataSetProduction_Performance)
+ * Please review [performance options](/documentation/4.5/_device_detection__features__performance_options.html)
+ * and [hash dataset options](/documentation/4.5/_device_detection__hash.html#DeviceDetection_Hash_DataSetProduction_Performance)
  * for more information about adjusting performance.
  *
  * This example is available in full on [GitHub](https://github.com/51Degrees/device-detection-java-examples/blob/master/console/src/main/java/fiftyone/devicedetection/examples/console/PerformanceBenchmark.java).

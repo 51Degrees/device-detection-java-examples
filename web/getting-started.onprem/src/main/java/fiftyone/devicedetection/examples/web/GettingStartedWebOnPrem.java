@@ -148,7 +148,7 @@ public class GettingStartedWebOnPrem extends HttpServlet {
  *
  * Results can also be accessed in client-side code by using the `fod` object. Note that the global
  * object name can be changed by using the setObjectName option on the
- * [JavaScriptBuilderElementBuilder](//51degrees.com/pipeline-java/classfiftyone_1_1pipeline_1_1javascriptbuilder_1_1flowelements_1_1_java_script_builder_element_builder.html)
+ * [JavaScriptBuilderElementBuilder](/documentation/4.5/apis/pipeline-java/classfiftyone_1_1pipeline_1_1javascriptbuilder_1_1flowelements_1_1_java_script_builder_element_builder.html)
  *
  * ```{java}
  * window.onload = function () {

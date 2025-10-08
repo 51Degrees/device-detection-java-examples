@@ -69,12 +69,12 @@
             <artifactId>device-detection.shared</artifactId>
             <version>${device-detection.version}</version>
             <type>test-jar</type>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>jakarta.xml.bind</groupId>

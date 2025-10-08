@@ -69,7 +69,7 @@
             <artifactId>device-detection.shared</artifactId>
             <version>${device-detection.version}</version>
             <type>test-jar</type>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

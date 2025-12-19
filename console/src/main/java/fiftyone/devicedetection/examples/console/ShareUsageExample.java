@@ -51,6 +51,7 @@ import static fiftyone.pipeline.util.FileFinder.getFilePath;
  *   <li>Configure batch size (minimum entries per message)</li>
  *   <li>Configure sampling rate (share percentage)</li>
  *   <li>Process evidence from a YAML file</li>
+ *   <li>Add custom identifiers to track the data source</li>
  * </ul>
  *
  * This is useful for scenarios where you want to share usage data without
@@ -62,6 +63,14 @@ import static fiftyone.pipeline.util.FileFinder.getFilePath;
  * algorithms to properly weight evidence coming from different sources versus repeated
  * evidence from the same source. Without this, the training data could be skewed by
  * over-representing certain device configurations.</p>
+ *
+ * <p><b>Identifying the Data Source (usage-from):</b> To help 51Degrees identify which
+ * customer or partner is sending usage data, you can add a custom "usage-from" header
+ * to the evidence. This is done by adding evidence with key {@code header.usage-from}
+ * and your company/application name as the value. In the XML packet sent to 51Degrees,
+ * this appears as: {@code <header Name="usage-from">YourCompanyName</header>}.
+ * Replace "YourCompanyName" in the {@link #USAGE_FROM_VALUE} constant with your actual
+ * identifier before running this example.</p>
  */
 public class ShareUsageExample {
     static final Logger logger = LoggerFactory.getLogger(ShareUsageExample.class);
@@ -77,6 +86,13 @@ public class ShareUsageExample {
 
     // Evidence key for client IP address - used for evidence deduplication (see class note above)
     private static final String EVIDENCE_CLIENTIP_KEY = "server.client-ip";
+
+    // Evidence key for identifying the source of share usage data.
+    // This adds a <header Name="usage-from">YourCompanyName</header> element to the XML packet,
+    // allowing 51Degrees to identify which customer/partner is sending the data.
+    // Replace "YourCompanyName" with your actual company or application identifier.
+    private static final String EVIDENCE_USAGE_FROM_KEY = "header.usage-from";
+    private static final String USAGE_FROM_VALUE = "YourCompanyName";
 
     // Random generator for fake IPs in this demo
     private static final Random random = new Random();
@@ -145,6 +161,10 @@ public class ShareUsageExample {
                     String clientIp = generateRandomIp();
                     evidence = new HashMap<>(evidence);  // Make mutable copy
                     evidence.put(EVIDENCE_CLIENTIP_KEY, clientIp);
+
+                    // Add the usage-from identifier so 51Degrees knows the source of this data.
+                    // This appears as <header Name="usage-from">YourCompanyName</header> in the XML.
+                    evidence.put(EVIDENCE_USAGE_FROM_KEY, USAGE_FROM_VALUE);
 
                     // Add evidence to flow data
                     flowData.addEvidence(evidence);

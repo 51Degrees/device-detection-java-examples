@@ -31,7 +31,6 @@ import fiftyone.pipeline.core.configuration.PipelineOptionsFactory;
 import fiftyone.pipeline.core.data.FlowData;
 import fiftyone.pipeline.core.flowelements.Pipeline;
 import fiftyone.pipeline.engines.fiftyone.flowelements.FiftyOnePipelineBuilder;
-import fiftyone.pipeline.engines.services.DataUpdateServiceDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,7 +110,6 @@ public class GettingStartedOnPrem {
         PipelineOptions pipelineOptions = PipelineOptionsFactory.getOptionsFromFile(optionsFile);
         // Build a new Pipeline from the configuration.
         try (Pipeline pipeline = new FiftyOnePipelineBuilder()
-                .addService(new DataUpdateServiceDefault())
                 .buildFromConfiguration(pipelineOptions)) {
 
 

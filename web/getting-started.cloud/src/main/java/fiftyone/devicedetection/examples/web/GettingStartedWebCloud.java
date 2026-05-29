@@ -61,8 +61,15 @@ public class GettingStartedWebCloud extends HttpServlet {
         // check resource key and set as System Property
         getOrSetTestResourceKey(resourceKey);
 
-        // start Jetty with this WebApp
-        EmbedJetty.runWebApp(resourceBase, 8081);
+        String portEnv = System.getenv("PORT");
+        if (portEnv != null) {
+            // Automated runs (e.g. the unified Selenium suite) inject a port and have no
+            // interactive stdin, so keep the server alive by joining it instead of waiting on Enter.
+            EmbedJetty.startWebApp(resourceBase, Integer.parseInt(portEnv)).join();
+        } else {
+            // start Jetty with this WebApp
+            EmbedJetty.runWebApp(resourceBase, 8081);
+        }
     }
 
      FlowDataProviderCore flowDataProvider = new FlowDataProviderCore.Default();

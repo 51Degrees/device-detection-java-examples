@@ -143,6 +143,32 @@ public class HtmlContentHelper {
         return engine;
     }
 
+    /**
+     * Helper to output a warning, intended to appear at the top of the page, when the
+     * on-premise data file is more than 28 days old, suggesting a more recent data file
+     * may be needed. For the cloud engine (which has no local data file) this is a no-op.
+     * @param out the PrintWriter to write to
+     * @param flowData the flowdata used to determine the engine and the data file age
+     */
+    public static void doDataFileAgeWarning(PrintWriter out, FlowData flowData) {
+        FlowElement<?, ?> engine = getFlowElement(flowData);
+        if (engine instanceof CloudRequestEngine) {
+            // Cloud engine has no local data file - nothing to warn about.
+            return;
+        }
+        // date of creation
+        Date fileDate = ((DeviceDetectionHashEngine) engine).getDataFilePublishedDate();
+        long daysOld = ChronoUnit.DAYS.between(fileDate.toInstant(), Instant.now());
+        if (daysOld > 28) {
+            // language=html
+            out.append(String.format(
+                    "<div class=\"c-eg-alert\">The data file is more than %d days old. " +
+                            "A more recent data file " +
+                            " may be needed to correctly detect the latest devices, " +
+                            "browsers, etc.</div>\n", daysOld));
+        }
+    }
+
     public static void doDeviceData(PrintWriter out, DeviceData device, FlowData flowData,
                                     String dataFileLocation) {
         FlowElement<?, ?> engine = getFlowElement(flowData);
@@ -163,12 +189,6 @@ public class HtmlContentHelper {
                     "<strong>on-premise device detection engine</strong> using a '%s' data file, " +
                     "created %s, %d days ago, from location '%s'.</p>",
                     dataTier, displayDate, daysOld, dataFileLocation);
-            if (daysOld > 28) {
-                content += String.format(
-                        "<p>The data file is more than %d days old. A more recent data file " +
-                                " may be needed to correctly detect the latest devices, " +
-                                "browsers, etc.</p>", daysOld);
-            }
         }
         // language=html
         out.append(

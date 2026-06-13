@@ -48,7 +48,7 @@ public class PropertyHelper {
             String message =
                     "The property '" + e.getPropertyName() + "' is not " +
                     "available in this data file. See data file options " +
-                    "<a href=\"https://51degrees.com/pricing\">here</a>";
+                    "<a href=\"https://51degrees.com/pricing?utm_source=code&amp;utm_medium=example&amp;utm_campaign=device-detection-java-examples&amp;utm_content=shared-src-main-java-fiftyone-devicedetection-examples-shared-propertyhelper.java&amp;utm_term=property-not-available\">here</a>";
             AspectPropertyValue<T> result = new AspectPropertyValueDefault<>();
             result.setNoValueMessage(message);
             return result;

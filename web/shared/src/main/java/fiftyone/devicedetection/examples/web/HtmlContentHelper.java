@@ -57,18 +57,13 @@ public class HtmlContentHelper {
                 "<html lang='en'>\n" +
                 "<head>\n"+
                 "<meta charset=\"UTF-8\">\n" +
+                "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
                 "<title>" + title + "</title>\n" +
-                "<style> body {margin: 2em; font-family: sans-serif;}"+
-                "table {font-size: smaller; background-color: lightblue} " +
-                "tr {background-color: lightyellow} "+
-                "td {padding: 5px} "+
-                ".lightred {background-color: lightpink}"+
-                ".lightyellow {background-color: lightyellow}"+
-                ".lightgreen {background-color: lightgreen}\n" +
-                ".smaller {font-size: smaller}</style>\n" +
+                "<link rel=\"stylesheet\" href=\"/css/examples-main.min.css\">\n" +
                 "</head>\n" +
                 "<body>\n" +
-                "<h1>51Degrees Device Detection Example ("+ title +")</h1>\n" +
+                "<div class=\"c-eg-page\">\n" +
+                "<h1 class=\"c-eg-page__title\">51Degrees Device Detection Example ("+ title +")</h1>\n" +
                 "\n");
     }
 
@@ -76,21 +71,26 @@ public class HtmlContentHelper {
     public static void doResponseHeaders(PrintWriter out, HttpServletResponse response) {
         // language=html
         out.append("<div id=\"response\">\n" +
-                "<h2>Response Headers</h2>\n" +
-                "<p>The following response headers were set:</p>\n" +
-                "<table>");
+                "<h2 class=\"c-eg-page__heading\">Response Headers</h2>\n" +
+                "<p class=\"c-eg-page__lead\">The following response headers were set:</p>\n" +
+                "<table class=\"c-eg-table\">\n" +
+                "<thead class=\"c-eg-table__head\"><tr class=\"c-eg-table__row\">" +
+                "<th class=\"c-eg-table__cell\">Key</th>" +
+                "<th class=\"c-eg-table__cell\">Value</th></tr></thead>\n" +
+                "<tbody>");
         for (String headerName: response.getHeaderNames()) {
-            out.append("<tr><td>")
+            out.append("<tr class=\"c-eg-table__row c-eg-table__row--present\">" +
+                            "<td class=\"c-eg-table__cell c-eg-table__cell--key\">")
                     .append(headerName)
-                    .append("</td><td>")
+                    .append("</td><td class=\"c-eg-table__cell\">")
                     .append(response.getHeader(headerName))
                     .append("</td></tr>\n");
         }
-        out.append("</table></div>");
+        out.append("</tbody></table></div>");
 
         if (response.getHeaderNames().contains("Accept-CH") == false) {
             out.append(
-         "<div class=\"example-alert\">WARNING: There is no Accept-CH header in the response. " +
+         "<div class=\"c-eg-alert\">WARNING: There is no Accept-CH header in the response. " +
                  "This may indicate that your browser does not support User-Agent Client Hints. " +
                  "This is not necessarily a problem, but if you are wanting to try out detection " +
                  "using User-Agent Client Hints, then make sure that your browser "+
@@ -106,19 +106,28 @@ public class HtmlContentHelper {
         // set up the table
         out.println(
                 "  <div id=\"evidence\">\n" +
-                        "  <h2>Evidence Used </h2>\n");
+                        "  <h2 class=\"c-eg-page__heading\">Evidence Used</h2>\n");
 
         doUachInfo(out);
 
-        out.println("<table>\n");
+        out.println("<p class=\"c-eg-legend\">Evidence was " +
+                "<span class=\"c-eg-legend__swatch c-eg-legend__swatch--used\">used</span> / " +
+                "<span class=\"c-eg-legend__swatch c-eg-legend__swatch--present\">present</span> " +
+                "for detection</p>");
+        out.println("<table class=\"c-eg-table\">\n" +
+                "<thead class=\"c-eg-table__head\"><tr class=\"c-eg-table__row\">" +
+                "<th class=\"c-eg-table__cell\">Key</th>" +
+                "<th class=\"c-eg-table__cell\">Value</th></tr></thead>\n" +
+                "<tbody>");
         // list by other evidence entries
         for (Map.Entry<String, Object> evidence : flowData.getEvidence().asKeyMap().entrySet()) {
             if (engine.getEvidenceKeyFilter().include(evidence.getKey())) {
-                out.println("<tr>");
-                out.println("<td>" + evidence.getKey() + "</td><td>" + evidence.getValue() + "</td></tr>");
+                out.println("<tr class=\"c-eg-table__row c-eg-table__row--present\">");
+                out.println("<td class=\"c-eg-table__cell c-eg-table__cell--key\">" + evidence.getKey() +
+                        "</td><td class=\"c-eg-table__cell\">" + evidence.getValue() + "</td></tr>");
             }
         }
-        out.println("</table>\n" +
+        out.println("</tbody></table>\n" +
                 "</div>\n");
     }
 
@@ -163,19 +172,24 @@ public class HtmlContentHelper {
         }
         // language=html
         out.append(
-                "<h2>Device Data</h2>\n" +
+                "<h2 class=\"c-eg-page__heading\">Device Data</h2>\n" +
                         "<div id=\"content\">\n" +
                         content +
-                        "    <table>\n" +
-                        "        <tr><td>Hardware Vendor</td><td>" + asString(tryGet(device::getHardwareVendor)) + "</td></tr>\n" +
-                        "        <tr><td>Hardware Name</td><td>" + asString(tryGet(device::getHardwareName)) + "</td></tr>\n" +
-                        "        <tr><td>Device Type</td><td>" + asString(tryGet(device::getDeviceType)) + "</td></tr>\n" +
-                        "        <tr><td>Platform Vendor</td><td>" + asString(tryGet(device::getPlatformVendor)) + "</td></tr>\n" +
-                        "        <tr><td>Platform Name</td><td>" + asString(tryGet(device::getPlatformName)) + "</td></tr>\n" +
-                        "        <tr><td>Platform Version</td><td>" + asString(tryGet(device::getPlatformVersion)) + "</td></tr>\n" +
-                        "        <tr><td>Browser Vendor</td><td>" + asString(tryGet(device::getBrowserVendor)) + "</td></tr>\n" +
-                        "        <tr><td>Browser Name</td><td>" + asString(tryGet((device::getBrowserName))) + "</td></tr>\n" +
-                        "        <tr><td>Browser Version</td><td>" + asString(tryGet(device::getBrowserVersion)) + "</td></tr>\n" +
+                        "    <table class=\"c-eg-table\">\n" +
+                        "        <thead class=\"c-eg-table__head\"><tr class=\"c-eg-table__row\">" +
+                        "<th class=\"c-eg-table__cell\">Key</th>" +
+                        "<th class=\"c-eg-table__cell\">Value</th></tr></thead>\n" +
+                        "        <tbody>\n" +
+                        "        <tr class=\"c-eg-table__row c-eg-table__row--alt\"><td class=\"c-eg-table__cell c-eg-table__cell--key\">Hardware Vendor</td><td class=\"c-eg-table__cell\">" + asString(tryGet(device::getHardwareVendor)) + "</td></tr>\n" +
+                        "        <tr class=\"c-eg-table__row\"><td class=\"c-eg-table__cell c-eg-table__cell--key\">Hardware Name</td><td class=\"c-eg-table__cell\">" + asString(tryGet(device::getHardwareName)) + "</td></tr>\n" +
+                        "        <tr class=\"c-eg-table__row c-eg-table__row--alt\"><td class=\"c-eg-table__cell c-eg-table__cell--key\">Device Type</td><td class=\"c-eg-table__cell\">" + asString(tryGet(device::getDeviceType)) + "</td></tr>\n" +
+                        "        <tr class=\"c-eg-table__row\"><td class=\"c-eg-table__cell c-eg-table__cell--key\">Platform Vendor</td><td class=\"c-eg-table__cell\">" + asString(tryGet(device::getPlatformVendor)) + "</td></tr>\n" +
+                        "        <tr class=\"c-eg-table__row c-eg-table__row--alt\"><td class=\"c-eg-table__cell c-eg-table__cell--key\">Platform Name</td><td class=\"c-eg-table__cell\">" + asString(tryGet(device::getPlatformName)) + "</td></tr>\n" +
+                        "        <tr class=\"c-eg-table__row\"><td class=\"c-eg-table__cell c-eg-table__cell--key\">Platform Version</td><td class=\"c-eg-table__cell\">" + asString(tryGet(device::getPlatformVersion)) + "</td></tr>\n" +
+                        "        <tr class=\"c-eg-table__row c-eg-table__row--alt\"><td class=\"c-eg-table__cell c-eg-table__cell--key\">Browser Vendor</td><td class=\"c-eg-table__cell\">" + asString(tryGet(device::getBrowserVendor)) + "</td></tr>\n" +
+                        "        <tr class=\"c-eg-table__row\"><td class=\"c-eg-table__cell c-eg-table__cell--key\">Browser Name</td><td class=\"c-eg-table__cell\">" + asString(tryGet((device::getBrowserName))) + "</td></tr>\n" +
+                        "        <tr class=\"c-eg-table__row c-eg-table__row--alt\"><td class=\"c-eg-table__cell c-eg-table__cell--key\">Browser Version</td><td class=\"c-eg-table__cell\">" + asString(tryGet(device::getBrowserVersion)) + "</td></tr>\n" +
+                        "        </tbody>\n" +
                         "    </table>\n" +
                         "</div>\n");
 
@@ -217,7 +231,8 @@ public class HtmlContentHelper {
             return;
         }
         // language=html
-        out.append("<div><h2>Lite Data File</h2>" +
+        out.append("<h2 class=\"c-eg-page__heading\">Lite Data File</h2>" +
+                "<div class=\"c-eg-alert\">" +
                 "<p><em><strong>Some values may be unavailable</strong></em> because " +
                 "you are using a Lite data file included with this source distribution.\n" +
                 "<p>The example requires an Enterprise data file to work fully. " +
@@ -227,7 +242,7 @@ public class HtmlContentHelper {
 
     public static void doHtmlPostamble(PrintWriter out) {
         // language=html
-        out.append("\n</body></html>\n");
+        out.append("\n</div>\n</body></html>\n");
     }
 
 

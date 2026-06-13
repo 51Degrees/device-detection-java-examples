@@ -222,7 +222,7 @@ public class HtmlContentHelper {
                 "you are using a Lite data file included with this source distribution.\n" +
                 "<p>The example requires an Enterprise data file to work fully. " +
                 "You can get the Enterprise data file " +
-                "<a href='https://51degrees.com/pricing'>here</a></div>\n");
+                "<a href='https://51degrees.com/pricing?utm_source=code&amp;utm_medium=example&amp;utm_campaign=device-detection-java-examples&amp;utm_content=web-shared-src-main-java-fiftyone-devicedetection-examples-web-htmlcontenthelper.java&amp;utm_term=lite-data-file'>here</a></div>\n");
     }
 
     public static void doHtmlPostamble(PrintWriter out) {

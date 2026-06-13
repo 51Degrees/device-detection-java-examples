@@ -192,8 +192,6 @@ public class HtmlContentHelper {
                         "        </tbody>\n" +
                         "    </table>\n" +
                         "</div>\n");
-
-        doLiteRubric(out, flowData);
     }
 
     public static void doUachInfo(PrintWriter out) {
@@ -215,29 +213,6 @@ public class HtmlContentHelper {
                         "    (which is why this example works best in a \"private\" window if you launch the test" +
                         "    more than once).<p>" +
                         "    \n");
-    }
-
-    /**
-     * Helper to output text about missing values and what to expect from the Lite file
-     * @param out the PrintWriter to write to
-     * @param flowData the flowdata to use to determine whether the message needs to be output
-     */
-    public static void doLiteRubric(PrintWriter out, FlowData flowData) {
-        DeviceDetectionHashEngine ddhe = flowData.getPipeline().getElement(DeviceDetectionHashEngine.class);
-        if (Objects.isNull(ddhe)) {
-            return;
-        }
-        if (ddhe.getDataSourceTier().equals("Lite") == false) {
-            return;
-        }
-        // language=html
-        out.append("<h2 class=\"c-eg-page__heading\">Lite Data File</h2>" +
-                "<div class=\"c-eg-alert\">" +
-                "<p><em><strong>Some values may be unavailable</strong></em> because " +
-                "you are using a Lite data file included with this source distribution.\n" +
-                "<p>The example requires an Enterprise data file to work fully. " +
-                "You can get the Enterprise data file " +
-                "<a href='https://51degrees.com/pricing?utm_source=code&amp;utm_medium=example&amp;utm_campaign=device-detection-java-examples&amp;utm_content=web-shared-src-main-java-fiftyone-devicedetection-examples-web-htmlcontenthelper.java&amp;utm_term=lite-data-file'>here</a></div>\n");
     }
 
     /**

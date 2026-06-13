@@ -240,8 +240,56 @@ public class HtmlContentHelper {
                 "<a href='https://51degrees.com/pricing?utm_source=code&amp;utm_medium=example&amp;utm_campaign=device-detection-java-examples&amp;utm_content=web-shared-src-main-java-fiftyone-devicedetection-examples-web-htmlcontenthelper.java&amp;utm_term=lite-data-file'>here</a></div>\n");
     }
 
-    public static void doHtmlPostamble(PrintWriter out) {
+    /**
+     * Helper to output a contact-us message banner as the final element inside the
+     * page container. The variant is chosen from the engine in use:
+     * <ul>
+     *   <li>Cloud engine: the cloud variant is shown unconditionally, as these cloud
+     *   getting-started examples are free by design.</li>
+     *   <li>On-premise engine: the on-premise variant is shown only when the engine
+     *   reports the free 'Lite' data tier.</li>
+     * </ul>
+     * @param out the PrintWriter to write to
+     * @param flowData the flowdata used to determine the engine and, for on-premise, the tier
+     */
+    public static void doContactUsMessage(PrintWriter out, FlowData flowData) {
+        FlowElement<?, ?> engine = getFlowElement(flowData);
+        if (engine instanceof CloudRequestEngine) {
+            // Cloud getting-started example - free by design, always show.
+            doContactUsMessage(out, true);
+        } else {
+            // On-premise engine - only show on the free Lite data tier.
+            boolean isLite = ((DeviceDetectionHashEngine) engine)
+                    .getDataSourceTier().equals("Lite");
+            if (isLite) {
+                doContactUsMessage(out, false);
+            }
+        }
+    }
+
+    /**
+     * Outputs the contact-us message banner markup.
+     * @param out the PrintWriter to write to
+     * @param cloud true for the cloud variant, false for the on-premise variant
+     */
+    private static void doContactUsMessage(PrintWriter out, boolean cloud) {
         // language=html
+        if (cloud) {
+            out.append("<div class=\"c-eg-message\">\n" +
+                    "  <p class=\"c-eg-message__text\">Want to try on-premise? <a href=\"https://51degrees.com/contact-us\">Contact us</a> to discuss requirements.</p>\n" +
+                    "  <a class=\"b-btn c-eg-message__cta\" href=\"https://51degrees.com/contact-us\">Contact us</a>\n" +
+                    "</div>\n");
+        } else {
+            out.append("<div class=\"c-eg-message\">\n" +
+                    "  <p class=\"c-eg-message__text\">Need more on-premise properties and features? <a href=\"https://51degrees.com/contact-us\">Contact us</a> to explore the options.</p>\n" +
+                    "  <a class=\"b-btn c-eg-message__cta\" href=\"https://51degrees.com/contact-us\">Contact us</a>\n" +
+                    "</div>\n");
+        }
+    }
+
+    public static void doHtmlPostamble(PrintWriter out, FlowData flowData) {
+        // language=html
+        doContactUsMessage(out, flowData);
         out.append("\n</div>\n</body></html>\n");
     }
 

@@ -256,7 +256,7 @@ public class HtmlContentHelper {
                     "</div>\n");
         } else {
             out.append("<div class=\"c-eg-message\">\n" +
-                    "  <p class=\"c-eg-message__text\">Need more on-premise properties and features? <a href=\"https://51degrees.com/contact-us\">Contact us</a> to explore the options.</p>\n" +
+                    "  <p class=\"c-eg-message__text\">The paid data file adds daily automatic updates, non-human identification and IP intelligence. <a href=\"https://51degrees.com/contact-us\">Contact us</a> to explore the options.</p>\n" +
                     "  <a class=\"b-btn c-eg-message__cta\" href=\"https://51degrees.com/contact-us\">Contact us</a>\n" +
                     "</div>\n");
         }

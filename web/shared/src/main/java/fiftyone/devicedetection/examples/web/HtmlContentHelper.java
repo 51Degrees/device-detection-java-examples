@@ -57,18 +57,13 @@ public class HtmlContentHelper {
                 "<html lang='en'>\n" +
                 "<head>\n"+
                 "<meta charset=\"UTF-8\">\n" +
+                "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
                 "<title>" + title + "</title>\n" +
-                "<style> body {margin: 2em; font-family: sans-serif;}"+
-                "table {font-size: smaller; background-color: lightblue} " +
-                "tr {background-color: lightyellow} "+
-                "td {padding: 5px} "+
-                ".lightred {background-color: lightpink}"+
-                ".lightyellow {background-color: lightyellow}"+
-                ".lightgreen {background-color: lightgreen}\n" +
-                ".smaller {font-size: smaller}</style>\n" +
+                "<link rel=\"stylesheet\" href=\"/css/examples-main.min.css\">\n" +
                 "</head>\n" +
                 "<body>\n" +
-                "<h1>51Degrees Device Detection Example ("+ title +")</h1>\n" +
+                "<div class=\"c-eg-page\">\n" +
+                "<h1 class=\"c-eg-page__title\">51Degrees Device Detection Example ("+ title +")</h1>\n" +
                 "\n");
     }
 
@@ -76,21 +71,26 @@ public class HtmlContentHelper {
     public static void doResponseHeaders(PrintWriter out, HttpServletResponse response) {
         // language=html
         out.append("<div id=\"response\">\n" +
-                "<h2>Response Headers</h2>\n" +
-                "<p>The following response headers were set:</p>\n" +
-                "<table>");
+                "<h2 class=\"c-eg-page__heading\">Response Headers</h2>\n" +
+                "<p class=\"c-eg-page__lead\">The following response headers were set:</p>\n" +
+                "<table class=\"c-eg-table\">\n" +
+                "<thead class=\"c-eg-table__head\"><tr class=\"c-eg-table__row\">" +
+                "<th class=\"c-eg-table__cell\">Key</th>" +
+                "<th class=\"c-eg-table__cell\">Value</th></tr></thead>\n" +
+                "<tbody>");
         for (String headerName: response.getHeaderNames()) {
-            out.append("<tr><td>")
+            out.append("<tr class=\"c-eg-table__row c-eg-table__row--present\">" +
+                            "<td class=\"c-eg-table__cell c-eg-table__cell--key\">")
                     .append(headerName)
-                    .append("</td><td>")
+                    .append("</td><td class=\"c-eg-table__cell\">")
                     .append(response.getHeader(headerName))
                     .append("</td></tr>\n");
         }
-        out.append("</table></div>");
+        out.append("</tbody></table></div>");
 
         if (response.getHeaderNames().contains("Accept-CH") == false) {
             out.append(
-         "<div class=\"example-alert\">WARNING: There is no Accept-CH header in the response. " +
+         "<div class=\"c-eg-alert\">WARNING: There is no Accept-CH header in the response. " +
                  "This may indicate that your browser does not support User-Agent Client Hints. " +
                  "This is not necessarily a problem, but if you are wanting to try out detection " +
                  "using User-Agent Client Hints, then make sure that your browser "+
@@ -106,19 +106,28 @@ public class HtmlContentHelper {
         // set up the table
         out.println(
                 "  <div id=\"evidence\">\n" +
-                        "  <h2>Evidence Used </h2>\n");
+                        "  <h2 class=\"c-eg-page__heading\">Evidence Used</h2>\n");
 
         doUachInfo(out);
 
-        out.println("<table>\n");
+        out.println("<p class=\"c-eg-legend\">Evidence was " +
+                "<span class=\"c-eg-legend__swatch c-eg-legend__swatch--used\">used</span> / " +
+                "<span class=\"c-eg-legend__swatch c-eg-legend__swatch--present\">present</span> " +
+                "for detection</p>");
+        out.println("<table class=\"c-eg-table\">\n" +
+                "<thead class=\"c-eg-table__head\"><tr class=\"c-eg-table__row\">" +
+                "<th class=\"c-eg-table__cell\">Key</th>" +
+                "<th class=\"c-eg-table__cell\">Value</th></tr></thead>\n" +
+                "<tbody>");
         // list by other evidence entries
         for (Map.Entry<String, Object> evidence : flowData.getEvidence().asKeyMap().entrySet()) {
             if (engine.getEvidenceKeyFilter().include(evidence.getKey())) {
-                out.println("<tr>");
-                out.println("<td>" + evidence.getKey() + "</td><td>" + evidence.getValue() + "</td></tr>");
+                out.println("<tr class=\"c-eg-table__row c-eg-table__row--present\">");
+                out.println("<td class=\"c-eg-table__cell c-eg-table__cell--key\">" + evidence.getKey() +
+                        "</td><td class=\"c-eg-table__cell\">" + evidence.getValue() + "</td></tr>");
             }
         }
-        out.println("</table>\n" +
+        out.println("</tbody></table>\n" +
                 "</div>\n");
     }
 
@@ -132,6 +141,32 @@ public class HtmlContentHelper {
             }
         }
         return engine;
+    }
+
+    /**
+     * Helper to output a warning, intended to appear at the top of the page, when the
+     * on-premise data file is more than 28 days old, suggesting a more recent data file
+     * may be needed. For the cloud engine (which has no local data file) this is a no-op.
+     * @param out the PrintWriter to write to
+     * @param flowData the flowdata used to determine the engine and the data file age
+     */
+    public static void doDataFileAgeWarning(PrintWriter out, FlowData flowData) {
+        FlowElement<?, ?> engine = getFlowElement(flowData);
+        if (engine instanceof CloudRequestEngine) {
+            // Cloud engine has no local data file - nothing to warn about.
+            return;
+        }
+        // date of creation
+        Date fileDate = ((DeviceDetectionHashEngine) engine).getDataFilePublishedDate();
+        long daysOld = ChronoUnit.DAYS.between(fileDate.toInstant(), Instant.now());
+        if (daysOld > 28) {
+            // language=html
+            out.append(String.format(
+                    "<div class=\"c-eg-alert\">The data file is more than %d days old. " +
+                            "A more recent data file " +
+                            " may be needed to correctly detect the latest devices, " +
+                            "browsers, etc.</div>\n", daysOld));
+        }
     }
 
     public static void doDeviceData(PrintWriter out, DeviceData device, FlowData flowData,
@@ -154,32 +189,29 @@ public class HtmlContentHelper {
                     "<strong>on-premise device detection engine</strong> using a '%s' data file, " +
                     "created %s, %d days ago, from location '%s'.</p>",
                     dataTier, displayDate, daysOld, dataFileLocation);
-            if (daysOld > 28) {
-                content += String.format(
-                        "<p>The data file is more than %d days old. A more recent data file " +
-                                " may be needed to correctly detect the latest devices, " +
-                                "browsers, etc.</p>", daysOld);
-            }
         }
         // language=html
         out.append(
-                "<h2>Device Data</h2>\n" +
+                "<h2 class=\"c-eg-page__heading\">Device Data</h2>\n" +
                         "<div id=\"content\">\n" +
                         content +
-                        "    <table>\n" +
-                        "        <tr><td>Hardware Vendor</td><td>" + asString(tryGet(device::getHardwareVendor)) + "</td></tr>\n" +
-                        "        <tr><td>Hardware Name</td><td>" + asString(tryGet(device::getHardwareName)) + "</td></tr>\n" +
-                        "        <tr><td>Device Type</td><td>" + asString(tryGet(device::getDeviceType)) + "</td></tr>\n" +
-                        "        <tr><td>Platform Vendor</td><td>" + asString(tryGet(device::getPlatformVendor)) + "</td></tr>\n" +
-                        "        <tr><td>Platform Name</td><td>" + asString(tryGet(device::getPlatformName)) + "</td></tr>\n" +
-                        "        <tr><td>Platform Version</td><td>" + asString(tryGet(device::getPlatformVersion)) + "</td></tr>\n" +
-                        "        <tr><td>Browser Vendor</td><td>" + asString(tryGet(device::getBrowserVendor)) + "</td></tr>\n" +
-                        "        <tr><td>Browser Name</td><td>" + asString(tryGet((device::getBrowserName))) + "</td></tr>\n" +
-                        "        <tr><td>Browser Version</td><td>" + asString(tryGet(device::getBrowserVersion)) + "</td></tr>\n" +
+                        "    <table class=\"c-eg-table\">\n" +
+                        "        <thead class=\"c-eg-table__head\"><tr class=\"c-eg-table__row\">" +
+                        "<th class=\"c-eg-table__cell\">Key</th>" +
+                        "<th class=\"c-eg-table__cell\">Value</th></tr></thead>\n" +
+                        "        <tbody>\n" +
+                        "        <tr class=\"c-eg-table__row c-eg-table__row--alt\"><td class=\"c-eg-table__cell c-eg-table__cell--key\">Hardware Vendor</td><td class=\"c-eg-table__cell\">" + asString(tryGet(device::getHardwareVendor)) + "</td></tr>\n" +
+                        "        <tr class=\"c-eg-table__row\"><td class=\"c-eg-table__cell c-eg-table__cell--key\">Hardware Name</td><td class=\"c-eg-table__cell\">" + asString(tryGet(device::getHardwareName)) + "</td></tr>\n" +
+                        "        <tr class=\"c-eg-table__row c-eg-table__row--alt\"><td class=\"c-eg-table__cell c-eg-table__cell--key\">Device Type</td><td class=\"c-eg-table__cell\">" + asString(tryGet(device::getDeviceType)) + "</td></tr>\n" +
+                        "        <tr class=\"c-eg-table__row\"><td class=\"c-eg-table__cell c-eg-table__cell--key\">Platform Vendor</td><td class=\"c-eg-table__cell\">" + asString(tryGet(device::getPlatformVendor)) + "</td></tr>\n" +
+                        "        <tr class=\"c-eg-table__row c-eg-table__row--alt\"><td class=\"c-eg-table__cell c-eg-table__cell--key\">Platform Name</td><td class=\"c-eg-table__cell\">" + asString(tryGet(device::getPlatformName)) + "</td></tr>\n" +
+                        "        <tr class=\"c-eg-table__row\"><td class=\"c-eg-table__cell c-eg-table__cell--key\">Platform Version</td><td class=\"c-eg-table__cell\">" + asString(tryGet(device::getPlatformVersion)) + "</td></tr>\n" +
+                        "        <tr class=\"c-eg-table__row c-eg-table__row--alt\"><td class=\"c-eg-table__cell c-eg-table__cell--key\">Browser Vendor</td><td class=\"c-eg-table__cell\">" + asString(tryGet(device::getBrowserVendor)) + "</td></tr>\n" +
+                        "        <tr class=\"c-eg-table__row\"><td class=\"c-eg-table__cell c-eg-table__cell--key\">Browser Name</td><td class=\"c-eg-table__cell\">" + asString(tryGet((device::getBrowserName))) + "</td></tr>\n" +
+                        "        <tr class=\"c-eg-table__row c-eg-table__row--alt\"><td class=\"c-eg-table__cell c-eg-table__cell--key\">Browser Version</td><td class=\"c-eg-table__cell\">" + asString(tryGet(device::getBrowserVersion)) + "</td></tr>\n" +
+                        "        </tbody>\n" +
                         "    </table>\n" +
                         "</div>\n");
-
-        doLiteRubric(out, flowData);
     }
 
     public static void doUachInfo(PrintWriter out) {
@@ -204,30 +236,56 @@ public class HtmlContentHelper {
     }
 
     /**
-     * Helper to output text about missing values and what to expect from the Lite file
+     * Helper to output a contact-us message banner as the final element inside the
+     * page container. The variant is chosen from the engine in use:
+     * <ul>
+     *   <li>Cloud engine: the cloud variant is shown unconditionally, as these cloud
+     *   getting-started examples are free by design.</li>
+     *   <li>On-premise engine: the on-premise variant is shown only when the engine
+     *   reports the free 'Lite' data tier.</li>
+     * </ul>
      * @param out the PrintWriter to write to
-     * @param flowData the flowdata to use to determine whether the message needs to be output
+     * @param flowData the flowdata used to determine the engine and, for on-premise, the tier
      */
-    public static void doLiteRubric(PrintWriter out, FlowData flowData) {
-        DeviceDetectionHashEngine ddhe = flowData.getPipeline().getElement(DeviceDetectionHashEngine.class);
-        if (Objects.isNull(ddhe)) {
-            return;
+    public static void doContactUsMessage(PrintWriter out, FlowData flowData) {
+        FlowElement<?, ?> engine = getFlowElement(flowData);
+        if (engine instanceof CloudRequestEngine) {
+            // Cloud getting-started example - free by design, always show.
+            doContactUsMessage(out, true);
+        } else {
+            // On-premise engine - only show on the free Lite data tier.
+            boolean isLite = ((DeviceDetectionHashEngine) engine)
+                    .getDataSourceTier().equals("Lite");
+            if (isLite) {
+                doContactUsMessage(out, false);
+            }
         }
-        if (ddhe.getDataSourceTier().equals("Lite") == false) {
-            return;
-        }
-        // language=html
-        out.append("<div><h2>Lite Data File</h2>" +
-                "<p><em><strong>Some values may be unavailable</strong></em> because " +
-                "you are using a Lite data file included with this source distribution.\n" +
-                "<p>The example requires an Enterprise data file to work fully. " +
-                "You can get the Enterprise data file " +
-                "<a href='https://51degrees.com/pricing?utm_source=code&amp;utm_medium=example&amp;utm_campaign=device-detection-java-examples&amp;utm_content=web-shared-src-main-java-fiftyone-devicedetection-examples-web-htmlcontenthelper.java&amp;utm_term=lite-data-file'>here</a></div>\n");
     }
 
-    public static void doHtmlPostamble(PrintWriter out) {
+    /**
+     * Outputs the contact-us message banner markup.
+     * @param out the PrintWriter to write to
+     * @param cloud true for the cloud variant, false for the on-premise variant
+     */
+    private static void doContactUsMessage(PrintWriter out, boolean cloud) {
         // language=html
-        out.append("\n</body></html>\n");
+        if (cloud) {
+            out.append("<div class=\"c-eg-message\">\n" +
+                    "  <p class=\"c-eg-message__text\">Want to try on-premise? <a href=\"https://51degrees.com/contact-us?utm_source=code&utm_medium=example&utm_campaign=device-detection-java-examples&utm_content=web-shared-src-main-java-fiftyone-devicedetection-examples-web-htmlcontenthelper.java&utm_term=contact-us\">Contact us</a> to discuss requirements.</p>\n" +
+                    "  <a class=\"b-btn c-eg-message__cta\" href=\"https://51degrees.com/contact-us?utm_source=code&utm_medium=example&utm_campaign=device-detection-java-examples&utm_content=web-shared-src-main-java-fiftyone-devicedetection-examples-web-htmlcontenthelper.java&utm_term=contact-us\">Contact us</a>\n" +
+                    "</div>\n");
+        } else {
+            out.append("<div class=\"c-eg-message\">\n" +
+                    "  <p class=\"c-eg-message__text\">The paid data file adds daily automatic updates, non-human identification and IP intelligence. <a href=\"https://51degrees.com/contact-us?utm_source=code&utm_medium=example&utm_campaign=device-detection-java-examples&utm_content=web-shared-src-main-java-fiftyone-devicedetection-examples-web-htmlcontenthelper.java&utm_term=contact-us\">Contact us</a> to explore the options.</p>\n" +
+                    "  <a class=\"b-btn c-eg-message__cta\" href=\"https://51degrees.com/contact-us?utm_source=code&utm_medium=example&utm_campaign=device-detection-java-examples&utm_content=web-shared-src-main-java-fiftyone-devicedetection-examples-web-htmlcontenthelper.java&utm_term=contact-us\">Contact us</a>\n" +
+                    "</div>\n");
+        }
+    }
+
+    public static void doHtmlPostamble(PrintWriter out, FlowData flowData) {
+        // language=html
+        doContactUsMessage(out, flowData);
+        out.append("\n</div>\n</body></html>\n");
     }
 
 

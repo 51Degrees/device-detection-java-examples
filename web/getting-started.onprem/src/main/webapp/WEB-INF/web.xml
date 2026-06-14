@@ -46,6 +46,18 @@
         <servlet-name>GettingStartedWebOnPrem</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
+    <!-- The example servlet is mapped to /* so it would otherwise swallow requests for
+         the shared pattern-library assets. Route the static css and js paths to Jetty's
+         built-in default servlet so the vendored examples-main.min.css and examples.min.js
+         are served from the webapp root. -->
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/css/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/js/*</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>

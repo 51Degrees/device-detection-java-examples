@@ -79,6 +79,9 @@ public class GettingStartedWebOnPrem extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             doHtmlPreamble(out, "Web Integration On-Premise Example");
 
+            // show the data-file-age warning, if applicable, at the top of the page
+            doDataFileAgeWarning(out, flowData);
+
             // request main 51Degrees Client Side Script - this is automatically
             // served by inclusion of the PipelineFilter which intercepts the request
             // and serves dynamically generated JavaScript
@@ -99,7 +102,7 @@ public class GettingStartedWebOnPrem extends HttpServlet {
             doStaticText(out, resourceBase + "/WEB-INF/html/apple-detection.html");
             doEvidence(out, request, flowData);
             doResponseHeaders(out, response);
-            doHtmlPostamble(out);
+            doHtmlPostamble(out, flowData);
         }
     }
 

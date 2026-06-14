@@ -106,7 +106,7 @@ public class GettingStartedWebCloud extends HttpServlet {
             doStaticText(out, resourceBase + "/WEB-INF/html/apple-detection.html");
             doEvidence(out, request, flowData);
             doResponseHeaders(out, response);
-            doHtmlPostamble(out);
+            doHtmlPostamble(out, flowData);
         }
     }
 

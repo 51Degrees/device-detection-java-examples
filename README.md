@@ -100,3 +100,36 @@ Use them with relevant example class entrypoints like:
 ```bash
 java -cp .\console\target\device-detection-java-examples.console-4.4.20-jar-with-dependencies.jar fiftyone.devicedetection.examples.console.OfflineProcessing
 ```
+
+### Native library access
+
+The on-premise examples load a native library through `System.load`. Recent JDKs treat
+that as a restricted method and warn unless native access has been granted
+(see [JEP 472](https://openjdk.org/jeps/472)). The fat JARs above put everything on the
+classpath, so the permission to use is `ALL-UNNAMED`:
+
+```bash
+java -cp .\console\target\device-detection-java-examples.console-4.4.20-jar-with-dependencies.jar --enable-native-access=ALL-UNNAMED fiftyone.devicedetection.examples.console.OfflineProcessing
+```
+
+If you run against the individual pipeline JARs on the module path instead, grant
+access to the module that performs the load:
+
+```bash
+java --module-path libs --enable-native-access=fiftyone.pipeline.engines.fiftyone -m your.app/com.example.Main
+```
+
+See the
+[pipeline-java README](https://github.com/51Degrees/pipeline-java#java-modules-and-native-library-access)
+for the module names and the caveats that apply on the module path.
+
+With the Maven exec plugin:
+
+```xml
+<configuration>
+    <arguments>
+        <argument>--enable-native-access=ALL-UNNAMED</argument>
+        ...
+    </arguments>
+</configuration>
+```

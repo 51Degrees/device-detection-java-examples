@@ -98,7 +98,7 @@ will produce "fat" JARs inside `target` subfolders.
 Use them with relevant example class entrypoints like:
 
 ```bash
-java -cp .\console\target\device-detection-java-examples.console-4.4.20-jar-with-dependencies.jar fiftyone.devicedetection.examples.console.OfflineProcessing
+java -cp ./console/target/device-detection-java-examples.console-4.4.20-jar-with-dependencies.jar fiftyone.devicedetection.examples.console.OfflineProcessing
 ```
 
 ### Native library access
@@ -111,18 +111,24 @@ The fat JARs above bundle everything into a single jar on the classpath, so the
 permission to use is `ALL-UNNAMED`:
 
 ```bash
-java -cp .\console\target\device-detection-java-examples.console-4.4.20-jar-with-dependencies.jar --enable-native-access=ALL-UNNAMED fiftyone.devicedetection.examples.console.OfflineProcessing
+java -cp ./console/target/device-detection-java-examples.console-4.4.20-jar-with-dependencies.jar --enable-native-access=ALL-UNNAMED fiftyone.devicedetection.examples.console.OfflineProcessing
 ```
 
-With the Maven exec plugin:
+With the Maven exec plugin, use the `exec:exec` goal. `exec:java` runs in the Maven JVM
+and its `<arguments>` are passed to `main`, so a JVM flag there has no effect:
 
 ```xml
-<configuration>
-    <arguments>
-        <argument>--enable-native-access=ALL-UNNAMED</argument>
-        ...
-    </arguments>
-</configuration>
+<plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>exec-maven-plugin</artifactId>
+    <configuration>
+        <executable>java</executable>
+        <arguments>
+            <argument>--enable-native-access=ALL-UNNAMED</argument>
+            ...
+        </arguments>
+    </configuration>
+</plugin>
 ```
 
 A fat jar cannot narrow this any further, because everything inside it is part of the

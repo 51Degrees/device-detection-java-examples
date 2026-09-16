@@ -45,6 +45,14 @@ import static fiftyone.pipeline.util.FileFinder.getFilePath;
  * supplied filter which automatically creates and configures a device detection pipeline.
  * <p>
  * The configuration file for the pipeline is at src/main/webapp/WEB-INF/51Degrees-OnPrem.xml
+ * <p>
+ * The data file is taken from the 51DEGREES_DD_PATH environment variable, then
+ * from TestDataFile (an environment variable or system property), and otherwise
+ * the free Lite file in device-detection-data is used.
+ * <p>
+ * The server listens on port 8081 and stops when Enter is pressed. If the PORT
+ * environment variable is set, the server listens on that port instead and runs
+ * until the process is stopped, which is how automated tests start it.
  */
 public class GettingStartedWebOnPrem extends HttpServlet {
     private static final long serialVersionUID = 1734154705981153540L;
@@ -55,8 +63,15 @@ public class GettingStartedWebOnPrem extends HttpServlet {
         configureLogback(getFilePath("logback.xml"));
         logger.info("Running Example {}", GettingStartedWebOnPrem.class);
 
-        // start Jetty with this WebApp
-        EmbedJetty.runWebApp(resourceBase, 8081);
+        String portEnv = System.getenv("PORT");
+        if (portEnv != null) {
+            // Automated runs (e.g. the unified Selenium suite) inject a port and have no
+            // interactive stdin, so keep the server alive by joining it instead of waiting on Enter.
+            EmbedJetty.startWebApp(resourceBase, Integer.parseInt(portEnv)).join();
+        } else {
+            // start Jetty with this WebApp
+            EmbedJetty.runWebApp(resourceBase, 8081);
+        }
     }
 
      FlowDataProviderCore flowDataProvider = new FlowDataProviderCore.Default();

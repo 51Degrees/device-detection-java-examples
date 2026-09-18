@@ -78,7 +78,7 @@ The tables below describe the examples available in this repository.
 | Example                  | Description                                                                                                                                                                                                                    |
 |--------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | GettingStarted (Console) | How to use the 51Degrees on-premise device detection API to determine details about a device based on its User-Agent and User-Agent Client Hints HTTP header values.                                                           |
-| GettingStarted (Web)     | How to use the 51Degrees Cloud service to determine details about a device as part of a simple Java servlet website.                                                                                                           |
+| GettingStarted (Web)     | How to use the 51Degrees on-premise device detection API to determine details about a device as part of a simple Java servlet website.                                                                                         |
 | Metadata                 | How to access the meta-data that relates to things like the properties populated device detection.                                                                                                                             |
 | MatchMetrics             | How to view metrics associated with the properties of processing with a Device Detection engine.                                                                                                                               |
 | OfflineProcessing        | Example showing how to ingest a file containing data from web requests and perform detection against the entries.                                                                                                              |
@@ -100,6 +100,21 @@ Use them with relevant example class entrypoints like:
 ```bash
 java -cp ./console/target/device-detection-java-examples.console-4.4.20-jar-with-dependencies.jar fiftyone.devicedetection.examples.console.OfflineProcessing
 ```
+
+### Web examples
+
+The web examples are run from the root of this repository, because they find their
+web content by a path relative to it. They listen on port 8081 and stop when Enter
+is pressed. Set the `PORT` environment variable to listen on another port, in which
+case the example runs until the process is stopped:
+
+```bash
+PORT=8100 java -jar ./web/getting-started.onprem/target/device-detection-java-examples.web.getting-started.onprem-4.4.20-jar-with-dependencies.jar
+```
+
+The on-premise web example takes its data file from the `51DEGREES_DD_PATH`
+environment variable, then from `TestDataFile`, and otherwise uses the free Lite file
+in `device-detection-data`.
 
 ### Native library access
 

@@ -6,16 +6,19 @@ on:
       dryrun:
         type: boolean
         default: false
+      common-ci-ref:
+        type: string
+        default: ''
 
 jobs:
   PullRequests:
     name: Pull Requests
-    uses: 51Degrees/common-ci/.github/workflows/nightly-pull-requests.yml@nightly-pipeline
+    uses: 51Degrees/common-ci/.github/workflows/nightly-pull-requests.yml@main
     with:
-      common-ci-ref: nightly-pipeline
       repo-name: ${{ github.event.repository.name }}
       org-name: ${{ github.event.repository.owner.login }}
       dryrun: ${{ inputs.dryrun || false }}
+      common-ci-ref: ${{ inputs.common-ci-ref || '' }}
       cache-assets: true
     secrets:
       token: ${{ secrets.ACCESS_TOKEN }}

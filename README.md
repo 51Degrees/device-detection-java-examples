@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> This repo has been merged into the monorepo https://github.com/51Degrees/51degrees-java, under `examples/device-detection/`. Please refer to the new monorepository for issues and PRs. The examples are maintained there and build against the packages published from there, from version 4.5.127.
+
 # 51Degrees Device Detection Engines - Examples
 
 ![51Degrees](https://51degrees.com/img/logo.png?utm_source=github&utm_medium=readme&utm_campaign=device-detection-java-examples&utm_content=readme.md&utm_term=51degrees-device-detection-engines-examples "Data rewards the curious") **Java Device Detection**
